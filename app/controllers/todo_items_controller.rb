@@ -8,56 +8,43 @@ class TodoItemsController < ApplicationController
   end
 
   def create
-    @todo_item = created_todo_item
-
-    respond_to do |format|
-      format.html { redirect_to todo_items_path }
-      format.json
-    end
+    create_todo_item
+    redirect_to todo_items_path
   end
 
   def update
-    @todo_item = updated_todo_item
-
-    respond_to do |format|
-      format.html { redirect_to todo_items_path }
-      format.json
-    end
+    update_todo_item
+    redirect_to todo_items_path
   end
 
   def destroy
-    todo_item.destroy
-
-    respond_to do |format|
-      format.html { redirect_to todo_items_path }
-      format.json
-    end
+    destroy_todo_item
+    redirect_to todo_items_path
   end
 
   private
-
-  def todo_attributes
-    params.require(:todo_item).permit(:content)
-  end
 
   def todo_items
     TodoItem.all
   end
 
-  def created_todo_item
+  def create_todo_item
     TodoItem.create(todo_attributes)
   end
 
-  def updated_todo_item
-    todo_item.update(todo_attributes)
-    todo_item
+  def update_todo_item
+    TodoItem.update(id, todo_attributes)
+  end
+
+  def destroy_todo_item
+    TodoItem.destroy(id)
+  end
+
+  def todo_attributes
+    params.require(:todo_item).permit(:content)
   end
 
   def id
     params[:id]
-  end
-
-  def todo_item
-    TodoItem.find(id)
   end
 end

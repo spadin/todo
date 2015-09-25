@@ -5,6 +5,7 @@ gem 'pg'
 gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'puma'
+gem 'jquery-rails'
 
 group :development, :test do
   gem 'byebug'

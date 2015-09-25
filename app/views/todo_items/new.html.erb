@@ -1,6 +1,3 @@
 <%= form_for TodoItem.new do |f| %>
-  <%= f.label :content %>
-  <%= f.text_field :content %>
-
-  <%= f.submit 'Submit' %>
+  <%= f.label :content %> <%= f.text_field :content, autofocus: true %> <%= f.submit 'Submit' %>
 <% end %>

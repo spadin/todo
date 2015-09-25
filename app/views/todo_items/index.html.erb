@@ -1,5 +1,7 @@
 <ul>
   <% @todo_items.each do |todo_item| %>
-  <li><%= todo_item.content %></li>
+    <li><%= todo_item.content %> <%= link_to 'delete', todo_item_path(todo_item), method: :delete %></li>
   <% end %>
 </ul>
+
+<%= link_to 'new', new_todo_item_path %>
