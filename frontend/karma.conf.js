@@ -3,10 +3,10 @@ module.exports = function(config) {
     browsers: ['PhantomJS'],
     frameworks: ['jasmine'],
     files: [
-      'spec/*_spec.js'
+      'spec/**/*_spec.js'
     ],
     preprocessors: {
-      'spec/*.js': ['webpack']
+      'spec/**/*.js': ['webpack']
     },
     reporters: ['dots'],
     webpack: {
