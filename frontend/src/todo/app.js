@@ -7,7 +7,7 @@ class App extends React.Component {
     return (
       <div>
         <AddItem />
-        <Items src="/api/todo_items.json" />
+        <Items store={this.props.store} />
       </div>
     );
   }

@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import _ from 'lodash';
 import React from 'react';
 import Item from './item';
@@ -9,7 +8,7 @@ class Items extends React.Component {
   }
 
   componentWillMount() {
-    $.get(this.props.src).then((data) => {
+    this.props.store.findAll().then((data) => {
       this.setState({items: data.todo_items});
     });
   }
@@ -17,7 +16,7 @@ class Items extends React.Component {
   getItems() {
     return _.map(this.state.items, (item) => {
       return (
-        <Item content={item.content} />
+        <Item key={item.id} content={item.content} />
       );
     });
   }

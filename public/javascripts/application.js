@@ -67,8 +67,14 @@
 
 	var _todoApp2 = _interopRequireDefault(_todoApp);
 
+	var _todoStore = __webpack_require__(238);
+
+	var _todoStore2 = _interopRequireDefault(_todoStore);
+
+	var todoStore = new _todoStore2['default']({ resourceUrl: '/api/todo_items' });
+
 	(0, _jquery2['default'])(function () {
-	  _react2['default'].render(_react2['default'].createElement(_todoApp2['default'], null), document.getElementById('container'));
+	  _react2['default'].render(_react2['default'].createElement(_todoApp2['default'], { store: todoStore }), document.getElementById('container'));
 	});
 
 /***/ },
@@ -20845,7 +20851,7 @@
 	        'div',
 	        null,
 	        _react2['default'].createElement(_add_item2['default'], null),
-	        _react2['default'].createElement(_items2['default'], { src: '/api/todo_items.json' })
+	        _react2['default'].createElement(_items2['default'], { store: this.props.store })
 	      );
 	    }
 	  }]);
@@ -21149,10 +21155,6 @@
 	  value: true
 	});
 
-	var _jquery = __webpack_require__(3);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
 	var _lodash = __webpack_require__(235);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
@@ -21183,7 +21185,7 @@
 	    value: function componentWillMount() {
 	      var _this = this;
 
-	      _jquery2['default'].get(this.props.src).then(function (data) {
+	      this.props.store.findAll().then(function (data) {
 	        _this.setState({ items: data.todo_items });
 	      });
 	    }
@@ -21191,7 +21193,7 @@
 	    key: 'getItems',
 	    value: function getItems() {
 	      return _lodash2['default'].map(this.state.items, function (item) {
-	        return _react2['default'].createElement(_item2['default'], { content: item.content });
+	        return _react2['default'].createElement(_item2['default'], { key: item.id, content: item.content });
 	      });
 	    }
 	  }, {
@@ -28116,6 +28118,993 @@
 
 	exports['default'] = Item;
 	module.exports = exports['default'];
+
+/***/ },
+/* 238 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _createClass = __webpack_require__(231)["default"];
+
+	var _classCallCheck = __webpack_require__(232)["default"];
+
+	var _interopRequireDefault = __webpack_require__(2)["default"];
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _request = __webpack_require__(239);
+
+	var _request2 = _interopRequireDefault(_request);
+
+	var _resource = __webpack_require__(266);
+
+	var _resource2 = _interopRequireDefault(_resource);
+
+	var Store = (function () {
+	  function Store() {
+	    var _ref = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+	    var resourceUrl = _ref.resourceUrl;
+
+	    _classCallCheck(this, Store);
+
+	    this.resource = new _resource2["default"](resourceUrl);
+	  }
+
+	  _createClass(Store, [{
+	    key: "findAll",
+	    value: function findAll() {
+	      return this.request(this.index());
+	    }
+	  }, {
+	    key: "request",
+	    value: function request(resource) {
+	      return _request2["default"].make(resource);
+	    }
+	  }, {
+	    key: "index",
+	    value: function index() {
+	      return this.resource.index();
+	    }
+	  }]);
+
+	  return Store;
+	})();
+
+	exports["default"] = Store;
+	module.exports = exports["default"];
+
+/***/ },
+/* 239 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _createClass = __webpack_require__(231)["default"];
+
+	var _classCallCheck = __webpack_require__(232)["default"];
+
+	var _Promise = __webpack_require__(240)["default"];
+
+	var _interopRequireDefault = __webpack_require__(2)["default"];
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _lodash = __webpack_require__(235);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	var Request = (function () {
+	  function Request(options) {
+	    _classCallCheck(this, Request);
+
+	    this.options = this.generateOptions(options);
+	  }
+
+	  _createClass(Request, [{
+	    key: "execute",
+	    value: function execute() {
+	      var _this = this;
+
+	      return new _Promise(function (resolve, reject) {
+	        _jquery2["default"].ajax(_this.options).success(resolve).fail(reject);
+	      });
+	    }
+	  }, {
+	    key: "generateOptions",
+	    value: function generateOptions(options) {
+	      return _lodash2["default"].chain(options).omit("endpoint").assign({ url: options.endpoint }).value();
+	    }
+	  }], [{
+	    key: "make",
+	    value: function make(options) {
+	      return new Request(options).execute();
+	    }
+	  }, {
+	    key: "delete",
+	    value: function _delete(endpoint) {
+	      return new Request({ method: "DELETE", endpoint: endpoint }).execute();
+	    }
+	  }, {
+	    key: "get",
+	    value: function get(endpoint) {
+	      return new Request({ method: "GET", endpoint: endpoint }).execute();
+	    }
+	  }, {
+	    key: "patch",
+	    value: function patch(endpoint) {
+	      return new Request({ method: "PATCH", endpoint: endpoint }).execute();
+	    }
+	  }, {
+	    key: "post",
+	    value: function post(endpoint) {
+	      return new Request({ method: "POST", endpoint: endpoint }).execute();
+	    }
+	  }, {
+	    key: "put",
+	    value: function put(endpoint) {
+	      return new Request({ method: "PUT", endpoint: endpoint }).execute();
+	    }
+	  }]);
+
+	  return Request;
+	})();
+
+	exports["default"] = Request;
+	module.exports = exports["default"];
+
+/***/ },
+/* 240 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	module.exports = { "default": __webpack_require__(241), __esModule: true };
+
+/***/ },
+/* 241 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	__webpack_require__(242);
+	__webpack_require__(74);
+	__webpack_require__(80);
+	__webpack_require__(243);
+	module.exports = __webpack_require__(18).Promise;
+
+/***/ },
+/* 242 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+/***/ },
+/* 243 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var $ = __webpack_require__(6),
+	    LIBRARY = __webpack_require__(71),
+	    global = __webpack_require__(17),
+	    ctx = __webpack_require__(229),
+	    classof = __webpack_require__(244),
+	    $def = __webpack_require__(16),
+	    isObject = __webpack_require__(25),
+	    anObject = __webpack_require__(70),
+	    aFunction = __webpack_require__(230),
+	    strictNew = __webpack_require__(245),
+	    forOf = __webpack_require__(246),
+	    setProto = __webpack_require__(228).set,
+	    same = __webpack_require__(251),
+	    species = __webpack_require__(255),
+	    SPECIES = __webpack_require__(59)('species'),
+	    RECORD = __webpack_require__(60)('record'),
+	    asap = __webpack_require__(256),
+	    PROMISE = 'Promise',
+	    process = global.process,
+	    isNode = classof(process) == 'process',
+	    P = global[PROMISE],
+	    Wrapper;
+
+	var testResolve = function testResolve(sub) {
+	  var test = new P(function () {});
+	  if (sub) test.constructor = Object;
+	  return P.resolve(test) === test;
+	};
+
+	var useNative = (function () {
+	  var works = false;
+	  function P2(x) {
+	    var self = new P(x);
+	    setProto(self, P2.prototype);
+	    return self;
+	  }
+	  try {
+	    works = P && P.resolve && testResolve();
+	    setProto(P2, P);
+	    P2.prototype = $.create(P.prototype, { constructor: { value: P2 } });
+	    // actual Firefox has broken subclass support, test that
+	    if (!(P2.resolve(5).then(function () {}) instanceof P2)) {
+	      works = false;
+	    }
+	    // actual V8 bug, https://code.google.com/p/v8/issues/detail?id=4162
+	    if (works && __webpack_require__(53)) {
+	      var thenableThenGotten = false;
+	      P.resolve($.setDesc({}, 'then', {
+	        get: function get() {
+	          thenableThenGotten = true;
+	        }
+	      }));
+	      works = thenableThenGotten;
+	    }
+	  } catch (e) {
+	    works = false;
+	  }
+	  return works;
+	})();
+
+	// helpers
+	var isPromise = function isPromise(it) {
+	  return isObject(it) && (useNative ? classof(it) == 'Promise' : RECORD in it);
+	};
+	var sameConstructor = function sameConstructor(a, b) {
+	  // library wrapper special case
+	  if (LIBRARY && a === P && b === Wrapper) return true;
+	  return same(a, b);
+	};
+	var getConstructor = function getConstructor(C) {
+	  var S = anObject(C)[SPECIES];
+	  return S != undefined ? S : C;
+	};
+	var isThenable = function isThenable(it) {
+	  var then;
+	  return isObject(it) && typeof (then = it.then) == 'function' ? then : false;
+	};
+	var notify = function notify(record, isReject) {
+	  if (record.n) return;
+	  record.n = true;
+	  var chain = record.c;
+	  asap(function () {
+	    var value = record.v,
+	        ok = record.s == 1,
+	        i = 0;
+	    var run = function run(react) {
+	      var cb = ok ? react.ok : react.fail,
+	          ret,
+	          then;
+	      try {
+	        if (cb) {
+	          if (!ok) record.h = true;
+	          ret = cb === true ? value : cb(value);
+	          if (ret === react.P) {
+	            react.rej(TypeError('Promise-chain cycle'));
+	          } else if (then = isThenable(ret)) {
+	            then.call(ret, react.res, react.rej);
+	          } else react.res(ret);
+	        } else react.rej(value);
+	      } catch (err) {
+	        react.rej(err);
+	      }
+	    };
+	    while (chain.length > i) run(chain[i++]); // variable length - can't use forEach
+	    chain.length = 0;
+	    record.n = false;
+	    if (isReject) setTimeout(function () {
+	      if (isUnhandled(record.p)) {
+	        if (isNode) {
+	          process.emit('unhandledRejection', value, record.p);
+	        } else if (global.console && console.error) {
+	          console.error('Unhandled promise rejection', value);
+	        }
+	      }record.a = undefined;
+	    }, 1);
+	  });
+	};
+	var isUnhandled = function isUnhandled(promise) {
+	  var record = promise[RECORD],
+	      chain = record.a || record.c,
+	      i = 0,
+	      react;
+	  if (record.h) return false;
+	  while (chain.length > i) {
+	    react = chain[i++];
+	    if (react.fail || !isUnhandled(react.P)) return false;
+	  }return true;
+	};
+	var $reject = function $reject(value) {
+	  var record = this;
+	  if (record.d) return;
+	  record.d = true;
+	  record = record.r || record; // unwrap
+	  record.v = value;
+	  record.s = 2;
+	  record.a = record.c.slice();
+	  notify(record, true);
+	};
+	var $resolve = function $resolve(value) {
+	  var record = this,
+	      then;
+	  if (record.d) return;
+	  record.d = true;
+	  record = record.r || record; // unwrap
+	  try {
+	    if (then = isThenable(value)) {
+	      asap(function () {
+	        var wrapper = { r: record, d: false }; // wrap
+	        try {
+	          then.call(value, ctx($resolve, wrapper, 1), ctx($reject, wrapper, 1));
+	        } catch (e) {
+	          $reject.call(wrapper, e);
+	        }
+	      });
+	    } else {
+	      record.v = value;
+	      record.s = 1;
+	      notify(record, false);
+	    }
+	  } catch (e) {
+	    $reject.call({ r: record, d: false }, e); // wrap
+	  }
+	};
+
+	// constructor polyfill
+	if (!useNative) {
+	  // 25.4.3.1 Promise(executor)
+	  P = function Promise(executor) {
+	    aFunction(executor);
+	    var record = {
+	      p: strictNew(this, P, PROMISE), // <- promise
+	      c: [], // <- awaiting reactions
+	      a: undefined, // <- checked in isUnhandled reactions
+	      s: 0, // <- state
+	      d: false, // <- done
+	      v: undefined, // <- value
+	      h: false, // <- handled rejection
+	      n: false // <- notify
+	    };
+	    this[RECORD] = record;
+	    try {
+	      executor(ctx($resolve, record, 1), ctx($reject, record, 1));
+	    } catch (err) {
+	      $reject.call(record, err);
+	    }
+	  };
+	  __webpack_require__(261)(P.prototype, {
+	    // 25.4.5.3 Promise.prototype.then(onFulfilled, onRejected)
+	    then: function then(onFulfilled, onRejected) {
+	      var S = anObject(anObject(this).constructor)[SPECIES];
+	      var react = {
+	        ok: typeof onFulfilled == 'function' ? onFulfilled : true,
+	        fail: typeof onRejected == 'function' ? onRejected : false
+	      };
+	      var promise = react.P = new (S != undefined ? S : P)(function (res, rej) {
+	        react.res = aFunction(res);
+	        react.rej = aFunction(rej);
+	      });
+	      var record = this[RECORD];
+	      record.c.push(react);
+	      if (record.a) record.a.push(react);
+	      if (record.s) notify(record, false);
+	      return promise;
+	    },
+	    // 25.4.5.1 Promise.prototype.catch(onRejected)
+	    'catch': function _catch(onRejected) {
+	      return this.then(undefined, onRejected);
+	    }
+	  });
+	}
+
+	// export
+	$def($def.G + $def.W + $def.F * !useNative, { Promise: P });
+	__webpack_require__(58)(P, PROMISE);
+	species(P);
+	species(Wrapper = __webpack_require__(18)[PROMISE]);
+
+	// statics
+	$def($def.S + $def.F * !useNative, PROMISE, {
+	  // 25.4.4.5 Promise.reject(r)
+	  reject: function reject(r) {
+	    return new this(function (res, rej) {
+	      rej(r);
+	    });
+	  }
+	});
+	$def($def.S + $def.F * (!useNative || testResolve(true)), PROMISE, {
+	  // 25.4.4.6 Promise.resolve(x)
+	  resolve: function resolve(x) {
+	    return isPromise(x) && sameConstructor(x.constructor, this) ? x : new this(function (res) {
+	      res(x);
+	    });
+	  }
+	});
+	$def($def.S + $def.F * !(useNative && __webpack_require__(262)(function (iter) {
+	  P.all(iter)['catch'](function () {});
+	})), PROMISE, {
+	  // 25.4.4.1 Promise.all(iterable)
+	  all: function all(iterable) {
+	    var C = getConstructor(this),
+	        values = [];
+	    return new C(function (res, rej) {
+	      forOf(iterable, false, values.push, values);
+	      var remaining = values.length,
+	          results = Array(remaining);
+	      if (remaining) $.each.call(values, function (promise, index) {
+	        C.resolve(promise).then(function (value) {
+	          results[index] = value;
+	          --remaining || res(results);
+	        }, rej);
+	      });else res(results);
+	    });
+	  },
+	  // 25.4.4.4 Promise.race(iterable)
+	  race: function race(iterable) {
+	    var C = getConstructor(this);
+	    return new C(function (res, rej) {
+	      forOf(iterable, false, function (promise) {
+	        C.resolve(promise).then(res, rej);
+	      });
+	    });
+	  }
+	});
+
+/***/ },
+/* 244 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// getting tag from 19.1.3.6 Object.prototype.toString()
+	'use strict';
+
+	var cof = __webpack_require__(64),
+	    TAG = __webpack_require__(59)('toStringTag'),
+
+	// ES3 wrong here
+	ARG = cof((function () {
+	  return arguments;
+	})()) == 'Arguments';
+
+	module.exports = function (it) {
+	  var O, T, B;
+	  return it === undefined ? 'Undefined' : it === null ? 'Null'
+	  // @@toStringTag case
+	  : typeof (T = (O = Object(it))[TAG]) == 'string' ? T
+	  // builtinTag case
+	  : ARG ? cof(O)
+	  // ES3 arguments fallback
+	  : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
+	};
+
+/***/ },
+/* 245 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	module.exports = function (it, Constructor, name) {
+	  if (!(it instanceof Constructor)) throw TypeError(name + ": use the 'new' operator!");
+	  return it;
+	};
+
+/***/ },
+/* 246 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var ctx = __webpack_require__(229),
+	    call = __webpack_require__(247),
+	    isArrayIter = __webpack_require__(248),
+	    anObject = __webpack_require__(70),
+	    toLength = __webpack_require__(249),
+	    getIterFn = __webpack_require__(250);
+	module.exports = function (iterable, entries, fn, that) {
+	  var iterFn = getIterFn(iterable),
+	      f = ctx(fn, that, entries ? 2 : 1),
+	      index = 0,
+	      length,
+	      step,
+	      iterator;
+	  if (typeof iterFn != 'function') throw TypeError(iterable + ' is not iterable!');
+	  // fast case for arrays with default iterator
+	  if (isArrayIter(iterFn)) for (length = toLength(iterable.length); length > index; index++) {
+	    entries ? f(anObject(step = iterable[index])[0], step[1]) : f(iterable[index]);
+	  } else for (iterator = iterFn.call(iterable); !(step = iterator.next()).done;) {
+	    call(iterator, f, step.value, entries);
+	  }
+	};
+
+/***/ },
+/* 247 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// call something on iterator step with safe closing on error
+	'use strict';
+
+	var anObject = __webpack_require__(70);
+	module.exports = function (iterator, fn, value, entries) {
+	  try {
+	    return entries ? fn(anObject(value)[0], value[1]) : fn(value);
+	    // 7.4.6 IteratorClose(iterator, completion)
+	  } catch (e) {
+	    var ret = iterator['return'];
+	    if (ret !== undefined) anObject(ret.call(iterator));
+	    throw e;
+	  }
+	};
+
+/***/ },
+/* 248 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// check on default Array iterator
+	'use strict';
+
+	var Iterators = __webpack_require__(78),
+	    ITERATOR = __webpack_require__(59)('iterator');
+	module.exports = function (it) {
+	  return (Iterators.Array || Array.prototype[ITERATOR]) === it;
+	};
+
+/***/ },
+/* 249 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 7.1.15 ToLength
+	'use strict';
+
+	var toInteger = __webpack_require__(76),
+	    min = Math.min;
+	module.exports = function (it) {
+	  return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
+	};
+
+/***/ },
+/* 250 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var classof = __webpack_require__(244),
+	    ITERATOR = __webpack_require__(59)('iterator'),
+	    Iterators = __webpack_require__(78);
+	module.exports = __webpack_require__(18).getIteratorMethod = function (it) {
+	  if (it != undefined) return it[ITERATOR] || it['@@iterator'] || Iterators[classof(it)];
+	};
+
+/***/ },
+/* 251 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _Object$is = __webpack_require__(252)["default"];
+
+	module.exports = _Object$is || function is(x, y) {
+	  return x === y ? x !== 0 || 1 / x === 1 / y : x != x && y != y;
+	};
+
+/***/ },
+/* 252 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	module.exports = { "default": __webpack_require__(253), __esModule: true };
+
+/***/ },
+/* 253 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	__webpack_require__(254);
+	module.exports = __webpack_require__(18).Object.is;
+
+/***/ },
+/* 254 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.3.10 Object.is(value1, value2)
+	'use strict';
+
+	var $def = __webpack_require__(16);
+	$def($def.S, 'Object', {
+	  is: __webpack_require__(251)
+	});
+
+/***/ },
+/* 255 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var $ = __webpack_require__(6),
+	    SPECIES = __webpack_require__(59)('species');
+	module.exports = function (C) {
+	  if (__webpack_require__(53) && !(SPECIES in C)) $.setDesc(C, SPECIES, {
+	    configurable: true,
+	    get: function get() {
+	      return this;
+	    }
+	  });
+	};
+
+/***/ },
+/* 256 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var global = __webpack_require__(17),
+	    macrotask = __webpack_require__(257).set,
+	    Observer = global.MutationObserver || global.WebKitMutationObserver,
+	    process = global.process,
+	    isNode = __webpack_require__(64)(process) == 'process',
+	    head,
+	    last,
+	    notify;
+
+	var flush = function flush() {
+	  var parent, domain;
+	  if (isNode && (parent = process.domain)) {
+	    process.domain = null;
+	    parent.exit();
+	  }
+	  while (head) {
+	    domain = head.domain;
+	    if (domain) domain.enter();
+	    head.fn.call(); // <- currently we use it only for Promise - try / catch not required
+	    if (domain) domain.exit();
+	    head = head.next;
+	  }last = undefined;
+	  if (parent) parent.enter();
+	};
+
+	// Node.js
+	if (isNode) {
+	  notify = function () {
+	    process.nextTick(flush);
+	  };
+	  // browsers with MutationObserver
+	} else if (Observer) {
+	    var toggle = 1,
+	        node = document.createTextNode('');
+	    new Observer(flush).observe(node, { characterData: true }); // eslint-disable-line no-new
+	    notify = function () {
+	      node.data = toggle = -toggle;
+	    };
+	    // for other environments - macrotask based on:
+	    // - setImmediate
+	    // - MessageChannel
+	    // - window.postMessag
+	    // - onreadystatechange
+	    // - setTimeout
+	  } else {
+	      notify = function () {
+	        // strange IE + webpack dev server bug - use .call(global)
+	        macrotask.call(global, flush);
+	      };
+	    }
+
+	module.exports = function asap(fn) {
+	  var task = { fn: fn, next: undefined, domain: isNode && process.domain };
+	  if (last) last.next = task;
+	  if (!head) {
+	    head = task;
+	    notify();
+	  }last = task;
+	};
+
+/***/ },
+/* 257 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var ctx = __webpack_require__(229),
+	    invoke = __webpack_require__(258),
+	    html = __webpack_require__(259),
+	    cel = __webpack_require__(260),
+	    global = __webpack_require__(17),
+	    process = global.process,
+	    setTask = global.setImmediate,
+	    clearTask = global.clearImmediate,
+	    MessageChannel = global.MessageChannel,
+	    counter = 0,
+	    queue = {},
+	    ONREADYSTATECHANGE = 'onreadystatechange',
+	    defer,
+	    channel,
+	    port;
+	var run = function run() {
+	  var id = +this;
+	  if (queue.hasOwnProperty(id)) {
+	    var fn = queue[id];
+	    delete queue[id];
+	    fn();
+	  }
+	};
+	var listner = function listner(event) {
+	  run.call(event.data);
+	};
+	// Node.js 0.9+ & IE10+ has setImmediate, otherwise:
+	if (!setTask || !clearTask) {
+	  setTask = function setImmediate(fn) {
+	    var args = [],
+	        i = 1;
+	    while (arguments.length > i) args.push(arguments[i++]);
+	    queue[++counter] = function () {
+	      invoke(typeof fn == 'function' ? fn : Function(fn), args);
+	    };
+	    defer(counter);
+	    return counter;
+	  };
+	  clearTask = function clearImmediate(id) {
+	    delete queue[id];
+	  };
+	  // Node.js 0.8-
+	  if (__webpack_require__(64)(process) == 'process') {
+	    defer = function (id) {
+	      process.nextTick(ctx(run, id, 1));
+	    };
+	    // Browsers with MessageChannel, includes WebWorkers
+	  } else if (MessageChannel) {
+	      channel = new MessageChannel();
+	      port = channel.port2;
+	      channel.port1.onmessage = listner;
+	      defer = ctx(port.postMessage, port, 1);
+	      // Browsers with postMessage, skip WebWorkers
+	      // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
+	    } else if (global.addEventListener && typeof postMessage == 'function' && !global.importScript) {
+	        defer = function (id) {
+	          global.postMessage(id + '', '*');
+	        };
+	        global.addEventListener('message', listner, false);
+	        // IE8-
+	      } else if (ONREADYSTATECHANGE in cel('script')) {
+	          defer = function (id) {
+	            html.appendChild(cel('script'))[ONREADYSTATECHANGE] = function () {
+	              html.removeChild(this);
+	              run.call(id);
+	            };
+	          };
+	          // Rest old browsers
+	        } else {
+	            defer = function (id) {
+	              setTimeout(ctx(run, id, 1), 0);
+	            };
+	          }
+	}
+	module.exports = {
+	  set: setTask,
+	  clear: clearTask
+	};
+
+/***/ },
+/* 258 */
+/***/ function(module, exports) {
+
+	// fast apply, http://jsperf.lnkit.com/fast-apply/5
+	"use strict";
+
+	module.exports = function (fn, args, that) {
+	                  var un = that === undefined;
+	                  switch (args.length) {
+	                                    case 0:
+	                                                      return un ? fn() : fn.call(that);
+	                                    case 1:
+	                                                      return un ? fn(args[0]) : fn.call(that, args[0]);
+	                                    case 2:
+	                                                      return un ? fn(args[0], args[1]) : fn.call(that, args[0], args[1]);
+	                                    case 3:
+	                                                      return un ? fn(args[0], args[1], args[2]) : fn.call(that, args[0], args[1], args[2]);
+	                                    case 4:
+	                                                      return un ? fn(args[0], args[1], args[2], args[3]) : fn.call(that, args[0], args[1], args[2], args[3]);
+	                  }return fn.apply(that, args);
+	};
+
+/***/ },
+/* 259 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = __webpack_require__(17).document && document.documentElement;
+
+/***/ },
+/* 260 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var isObject = __webpack_require__(25),
+	    document = __webpack_require__(17).document,
+
+	// in old IE typeof document.createElement is 'object'
+	is = isObject(document) && isObject(document.createElement);
+	module.exports = function (it) {
+	  return is ? document.createElement(it) : {};
+	};
+
+/***/ },
+/* 261 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var $redef = __webpack_require__(54);
+	module.exports = function (target, src) {
+	  for (var key in src) $redef(target, key, src[key]);
+	  return target;
+	};
+
+/***/ },
+/* 262 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _Array$from = __webpack_require__(263)['default'];
+
+	var SYMBOL_ITERATOR = __webpack_require__(59)('iterator'),
+	    SAFE_CLOSING = false;
+	try {
+	  var riter = [7][SYMBOL_ITERATOR]();
+	  riter['return'] = function () {
+	    SAFE_CLOSING = true;
+	  };
+	  _Array$from(riter, function () {
+	    throw 2;
+	  });
+	} catch (e) {/* empty */}
+	module.exports = function (exec) {
+	  if (!SAFE_CLOSING) return false;
+	  var safe = false;
+	  try {
+	    var arr = [7],
+	        iter = arr[SYMBOL_ITERATOR]();
+	    iter.next = function () {
+	      safe = true;
+	    };
+	    arr[SYMBOL_ITERATOR] = function () {
+	      return iter;
+	    };
+	    exec(arr);
+	  } catch (e) {/* empty */}
+	  return safe;
+	};
+
+/***/ },
+/* 263 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	module.exports = { "default": __webpack_require__(264), __esModule: true };
+
+/***/ },
+/* 264 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	__webpack_require__(74);
+	__webpack_require__(265);
+	module.exports = __webpack_require__(18).Array.from;
+
+/***/ },
+/* 265 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _Array$from = __webpack_require__(263)['default'];
+
+	var ctx = __webpack_require__(229),
+	    $def = __webpack_require__(16),
+	    toObject = __webpack_require__(13),
+	    call = __webpack_require__(247),
+	    isArrayIter = __webpack_require__(248),
+	    toLength = __webpack_require__(249),
+	    getIterFn = __webpack_require__(250);
+	$def($def.S + $def.F * !__webpack_require__(262)(function (iter) {
+	  _Array$from(iter);
+	}), 'Array', {
+	  // 22.1.2.1 Array.from(arrayLike, mapfn = undefined, thisArg = undefined)
+	  from: function from(arrayLike /*, mapfn = undefined, thisArg = undefined*/) {
+	    var O = toObject(arrayLike),
+	        C = typeof this == 'function' ? this : Array,
+	        mapfn = arguments[1],
+	        mapping = mapfn !== undefined,
+	        index = 0,
+	        iterFn = getIterFn(O),
+	        length,
+	        result,
+	        step,
+	        iterator;
+	    if (mapping) mapfn = ctx(mapfn, arguments[2], 2);
+	    // if object isn't iterable or it's array with default iterator - use simple case
+	    if (iterFn != undefined && !(C == Array && isArrayIter(iterFn))) {
+	      for (iterator = iterFn.call(O), result = new C(); !(step = iterator.next()).done; index++) {
+	        result[index] = mapping ? call(iterator, mapfn, [step.value, index], true) : step.value;
+	      }
+	    } else {
+	      for (result = new C(length = toLength(O.length)); length > index; index++) {
+	        result[index] = mapping ? mapfn(O[index], index) : O[index];
+	      }
+	    }
+	    result.length = index;
+	    return result;
+	  }
+	});
+
+/***/ },
+/* 266 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _createClass = __webpack_require__(231)["default"];
+
+	var _classCallCheck = __webpack_require__(232)["default"];
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var Resource = (function () {
+	  function Resource(url) {
+	    _classCallCheck(this, Resource);
+
+	    this.url = url;
+	  }
+
+	  _createClass(Resource, [{
+	    key: "create",
+	    value: function create() {
+	      return {
+	        method: "POST",
+	        endpoint: this.url
+	      };
+	    }
+	  }, {
+	    key: "index",
+	    value: function index() {
+	      return {
+	        method: "GET",
+	        endpoint: this.url
+	      };
+	    }
+	  }, {
+	    key: "update",
+	    value: function update(id) {
+	      return {
+	        method: "PUT",
+	        endpoint: this.url + "/" + id
+	      };
+	    }
+	  }, {
+	    key: "destroy",
+	    value: function destroy(id) {
+	      return {
+	        method: "DELETE",
+	        endpoint: this.url + "/" + id
+	      };
+	    }
+	  }]);
+
+	  return Resource;
+	})();
+
+	exports["default"] = Resource;
+	module.exports = exports["default"];
 
 /***/ }
 /******/ ]);
