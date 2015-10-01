@@ -1,7 +1,7 @@
 module.exports = function(config) {
   config.set({
     browsers: ['PhantomJS'],
-    frameworks: ['jasmine'],
+    frameworks: ['jasmine', 'sinon'],
     files: [
       'spec/**/*_spec.js'
     ],
