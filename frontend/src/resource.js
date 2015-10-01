@@ -6,28 +6,28 @@ class Resource {
   create() {
     return {
       method: "POST",
-      path: this.url
+      endpoint: this.url
     };
   }
 
   index() {
     return {
       method: "GET",
-      path: this.url
+      endpoint: this.url
     };
   }
 
   update(id) {
     return {
       method: "PUT",
-      path: `${this.url}/${id}`
+      endpoint: `${this.url}/${id}`
     };
   }
 
   destroy(id) {
     return {
       method: "DELETE",
-      path: `${this.url}/${id}`
+      endpoint: `${this.url}/${id}`
     };
   }
 }

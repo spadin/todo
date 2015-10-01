@@ -9,25 +9,25 @@ describe("Resource", () => {
 
   describe("#index", () => {
     it("returns the GET url as the index", () => {
-      expect(resource.index()).toEqual({method: "GET", path: "/api/endpoint"});
+      expect(resource.index()).toEqual({method: "GET", endpoint: "/api/endpoint"});
     });
   });
 
   describe("#create", () => {
-    it("returns the POST url as the create path", () => {
-      expect(resource.create()).toEqual({method: "POST", path: "/api/endpoint"});
+    it("returns the POST url as the create endpoint", () => {
+      expect(resource.create()).toEqual({method: "POST", endpoint: "/api/endpoint"});
     });
   });
 
   describe("#update", () => {
-    it("returns the PUT url and the update path", () => {
-      expect(resource.update("some-id")).toEqual({method: "PUT", path: "/api/endpoint/some-id"});
+    it("returns the PUT url and the update endpoint", () => {
+      expect(resource.update("some-id")).toEqual({method: "PUT", endpoint: "/api/endpoint/some-id"});
     });
   });
 
   describe("#destroy", () => {
-    it("returns the DELETE url and the destroy path", () => {
-      expect(resource.destroy("some-id")).toEqual({method: "DELETE", path: "/api/endpoint/some-id"});
+    it("returns the DELETE url and the destroy endpoint", () => {
+      expect(resource.destroy("some-id")).toEqual({method: "DELETE", endpoint: "/api/endpoint/some-id"});
     });
   });
 });
