@@ -5,12 +5,13 @@ class Store {
   constructor({resourceUrl} = {}) {
     this.resource = new Resource(resourceUrl);
   }
+
   findAll() {
     return this.request(this.index());
   }
 
   request(resource) {
-    return new Request(resource).execute();
+    return Request.make(resource);
   }
 
   index() {
