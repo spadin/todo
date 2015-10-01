@@ -1,8 +1,20 @@
+import Request from "../request";
+import Resource from "../resource";
+
 class Store {
-  constructor({resourceUrl = "testing"} = {}) {
+  constructor({resourceUrl} = {}) {
+    this.resource = new Resource(resourceUrl);
   }
   findAll() {
-    return new Promise(() => {});
+    return this.request(this.index());
+  }
+
+  request(resource) {
+    return new Request(resource).execute();
+  }
+
+  index() {
+    return this.resource.index();
   }
 }
 

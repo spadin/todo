@@ -1,18 +1,23 @@
 import $ from "jquery";
+import _ from "lodash";
 
 class Request {
-  constructor({method, endpoint}) {
-    this.method = method;
-    this.endpoint = endpoint;
+  constructor(options) {
+    this.options = this.generateOptions(options);
   }
 
   execute() {
     return new Promise((resolve, reject) => {
-      $.ajax({
-        method: this.method,
-        url: this.endpoint
-      }).success(resolve).fail(reject);
+      $.ajax(this.options).success(resolve).fail(reject);
     });
+  }
+
+  generateOptions(options) {
+    return _.chain(options).omit("endpoint").assign({url: options.endpoint}).value();
+  }
+
+  static make(options) {
+    return new Request(options).execute();
   }
 
   static delete(endpoint) {
