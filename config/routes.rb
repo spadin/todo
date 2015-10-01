@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  root to: 'application#index'
+  root to: 'welcome#index'
 
   resources :todo_items, only: [:index, :new, :create, :update, :destroy]
 
